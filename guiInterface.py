@@ -3,6 +3,8 @@ from naoqi import ALProxy
 import unicodedata
 import random
 import almath
+import math
+import motion
 import time
 
 class Pepper_For_Cop:
@@ -13,8 +15,9 @@ class Pepper_For_Cop:
         self.end = len(self.speech_list)
         self.movement_flag = True
         self.ip = "127.0.0.1"
-        self.port = 64878
+        self.port = 51301
         self.motionProxy = ALProxy("ALMotion", self.ip, self.port)
+        self.postureProxy = ALProxy("ALRobotPosture", self.ip, self.port)
         self.tts = ALProxy("ALTextToSpeech", self.ip, self.port)
 
         self.textBox = Text(master, width=50, bg="blue", fg="white")
@@ -31,6 +34,9 @@ class Pepper_For_Cop:
 
         self.speak_button = Button(root, text="Speak Next", command=self.speak_next)
         self.speak_button.pack()
+
+        self.give_turn_button = Button(root, text="Give Turn", command=self.give_turn)
+        self.give_turn_button.pack()
 
     def helloCallBack(self):
         tts = ALProxy("ALTextToSpeech", self.ip, self.port)
@@ -65,6 +71,27 @@ class Pepper_For_Cop:
         self.tts.say(self.speech_list[self.current % self.end])
         self.current += 1
 
+    def give_turn(self):
+        names = "LElbowRoll"
+        angleLists = [-45.0, 10.0, 0.0]
+        timeLists = [3.0, 6.0, 9.0]
+        isAbsolute = True
+        angleLists = [angle * math.pi / 180.0 for angle in angleLists]
+        try:
+            self.motionProxy.angleInterpolation(names, angleLists, timeLists, isAbsolute)
+        except Exception, errorMsg:
+            print str(errorMsg)
+            print "This example is not allowed on this robot."
+            exit()
+
+
+        # self.postureProxy.goToPosture("StandInit", 0.5)
+        # names = "LElbowRoll"
+        # angleLists = -60 * almath.TO_RAD
+        # print angleLists
+        # timeLists = 1.0
+        # isAbsolute = True
+        # self.motionProxy.angleInterpolation(names, angleLists, timeLists, isAbsolute)
 
 root = Tk()
 Pepper_For_Cop(root)
