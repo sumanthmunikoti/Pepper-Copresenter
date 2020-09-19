@@ -10,15 +10,20 @@ import time
 class Pepper_For_Cop:
 
     def __init__(self, master):
-        self.speech_list = ["I'm Pepper", "Python rocks", "I rock. Robots are amazing!"]
+        self.speech_list = ["Hi, I'm Pepper. I'm going to talk about Tigers today with the help of my co presenter, Eeeve",
+                            "The tiger is the largest extant cat species and a member of the genus Panthera.",
+                            "It is most recognisable for its dark vertical stripes on orange-brown fur with a lighter underside.",
+                            "It is an apex predator, primarily preying on ungulates such as deer and wild boar."]
         self.current = 0
         self.end = len(self.speech_list)
         self.movement_flag = True
-        self.ip = "127.0.0.1"
-        self.port = 51301
+        self.ip = "192.168.1.5"
+        # self.ip = "127.0.0.1"
+        self.port = 9559
         self.motionProxy = ALProxy("ALMotion", self.ip, self.port)
         self.postureProxy = ALProxy("ALRobotPosture", self.ip, self.port)
-        self.tts = ALProxy("ALTextToSpeech", self.ip, self.port)
+        # self.tts = ALProxy("ALTextToSpeech", self.ip, self.port)
+        self.tts = ALProxy("ALAnimatedSpeech", self.ip, self.port)
 
         self.textBox = Text(master, width=50, bg="blue", fg="white")
         self.textBox.pack()
@@ -38,11 +43,17 @@ class Pepper_For_Cop:
         self.give_turn_button = Button(root, text="Give Turn", command=self.give_turn)
         self.give_turn_button.pack()
 
+        self.take_turn_button = Button(root, text="Take Turn", command=self.take_turn)
+        self.take_turn_button.pack()
+
     def helloCallBack(self):
-        tts = ALProxy("ALTextToSpeech", self.ip, self.port)
-        u = self.textBox.get("1.0", "end-1c")
-        u = unicodedata.normalize('NFKD', u).encode('ascii', 'ignore')
-        tts.say(u)
+        # tts = ALProxy("ALTextToSpeech", self.ip, self.port)
+        tts = ALProxy("ALAnimatedSpeech", self.ip, self.port)
+        # tts.say("Look what I can do while speaking!")
+        # tts.say("It is territorial and generally a solitary but social predator, requiring large contiguous areas of habitat, which support its requirements for prey and rearing of its offspring. Tiger cubs stay with their mother for about two years, before they become independent and leave their mother's home range to establish their own.")
+        # u = self.textBox.get("1.0", "end-1c")
+        # u = unicodedata.normalize('NFKD', u).encode('ascii', 'ignore')
+        # tts.say(u)
 
     def start(self):
         self.cancel_id = None
@@ -52,10 +63,12 @@ class Pepper_For_Cop:
         self.motionProxy.setStiffnesses("Head", 1.0)
         names = "HeadYaw"
         rand = random.randrange(10, 60)
-        angleLists = rand * almath.TO_RAD
-        timeLists = 1.0
+        angleLists = [0.0, 5.0, 0.0]
+        angleLists = [angle * math.pi / 180.0 for angle in angleLists]
+        timeLists = [1.0, 2.0, 2.2]
         isAbsolute = True
-        self.motionProxy.angleInterpolation(names, angleLists, timeLists, isAbsolute)
+        self.motionProxy.angleInterpolation(names, rand * almath.TO_RAD, 1.0, isAbsolute)
+        self.motionProxy.angleInterpolation("HeadPitch", angleLists, timeLists, isAbsolute)
         self.cancel_id = self.textBox.after(1000, self.head_yaw)
 
     def stop(self):
@@ -64,25 +77,28 @@ class Pepper_For_Cop:
             self.cancel_id = None
 
     def speak_next(self):
-        angleLists = 10 * almath.TO_RAD
+        angleLists = random.randint(10, 35) * almath.TO_RAD
         timeLists = 1.0
         isAbsolute = True
         self.motionProxy.angleInterpolation("HeadYaw", angleLists, timeLists, isAbsolute)
         self.tts.say(self.speech_list[self.current % self.end])
         self.current += 1
 
+    def take_turn(self):
+        self.tts.say("Thank you")
+        self.motionProxy.angleInterpolation(["HeadYaw", "LShoulderPitch", "LElbowRoll", "LWristYaw"], [[40 * almath.TO_RAD, 0],
+                                                                            [40 * almath.TO_RAD, 100 * almath.TO_RAD],
+                                                                                          [-40 * almath.TO_RAD, 0],
+                                                                                          [40 * almath.TO_RAD, 0]],
+                                            [[1.5, 2.0], [1.5, 3.0], [1.5, 2.0], [1.0, 2.0]], True)
+        self.motionProxy.moveTo(0.5, 0.5, 0, _async=True)
+
+
     def give_turn(self):
-        names = "LElbowRoll"
-        angleLists = [-45.0, 10.0, 0.0]
-        timeLists = [3.0, 6.0, 9.0]
-        isAbsolute = True
-        angleLists = [angle * math.pi / 180.0 for angle in angleLists]
-        try:
-            self.motionProxy.angleInterpolation(names, angleLists, timeLists, isAbsolute)
-        except Exception, errorMsg:
-            print str(errorMsg)
-            print "This example is not allowed on this robot."
-            exit()
+        self.motionProxy.angleInterpolation("HeadYaw", 40 * almath.TO_RAD, 1.0, True)
+        self.tts.say("Eeve will take over the presentation now")
+        self.motionProxy.moveTo(-0.5, -0.5, 0, _async=True)
+        self.motionProxy.angleInterpolation("HeadYaw", 10 * almath.TO_RAD, 1.0, True)
 
 
         # self.postureProxy.goToPosture("StandInit", 0.5)
