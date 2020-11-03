@@ -16,7 +16,7 @@ while True:
     connection, client_address = sock.accept()
     try:
         print >> sys.stderr, 'connection from', client_address
-        tts = ALProxy("ALAnimatedSpeech", "127.0.0.1", 53554)
+        tts = ALProxy("ALAnimatedSpeech", "192.168.1.3", 9559)
 
         # Receive the data in small chunks and retransmit it
         while True:

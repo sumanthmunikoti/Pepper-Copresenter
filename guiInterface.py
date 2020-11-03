@@ -9,6 +9,98 @@ import time
 
 class Pepper_For_Cop:
 
+    gestures = ["animations/Stand/Emotions/Negative/Bored_1",
+"animations/Stand/Emotions/Neutral/Embarrassed_1",
+"animations/Stand/Emotions/Positive/Happy_4",
+"animations/Stand/Emotions/Positive/Hysterical_1",
+"animations/Stand/Emotions/Positive/Peaceful_1",
+"animations/Stand/Gestures/BowShort_1",
+"animations/Stand/Gestures/But_1",
+"animations/Stand/Gestures/CalmDown_1",
+"animations/Stand/Gestures/CalmDown_5",
+"animations/Stand/Gestures/CalmDown_6",
+"animations/Stand/Gestures/Choice_1",
+"animations/Stand/Gestures/Desperate_1",
+"animations/Stand/Gestures/Desperate_2",
+"animations/Stand/Gestures/Desperate_4",
+"animations/Stand/Gestures/Desperate_5",
+"animations/Stand/Gestures/Enthusiastic_4",
+"animations/Stand/Gestures/Enthusiastic_5",
+"animations/Stand/Gestures/Everything_1",
+"animations/Stand/Gestures/Everything_2",
+"animations/Stand/Gestures/Everything_3",
+"animations/Stand/Gestures/Everything_4",
+"animations/Stand/Gestures/Excited_1",
+"animations/Stand/Gestures/Explain_1",
+"animations/Stand/Gestures/Explain_10",
+"animations/Stand/Gestures/Explain_11",
+"animations/Stand/Gestures/Explain_2",
+"animations/Stand/Gestures/Explain_3",
+"animations/Stand/Gestures/Explain_4",
+"animations/Stand/Gestures/Explain_5",
+"animations/Stand/Gestures/Explain_6",
+"animations/Stand/Gestures/Explain_7",
+"animations/Stand/Gestures/Explain_8",
+"animations/Stand/Gestures/Far_1",
+"animations/Stand/Gestures/Far_2",
+"animations/Stand/Gestures/Far_3",
+"animations/Stand/Gestures/Give_3",
+"animations/Stand/Gestures/Give_4",
+"animations/Stand/Gestures/Give_5",
+"animations/Stand/Gestures/Give_6",
+"animations/Stand/Gestures/Hey_1",
+"animations/Stand/Gestures/Hey_3",
+"animations/Stand/Gestures/Hey_4",
+"animations/Stand/Gestures/Hey_6",
+"animations/Stand/Gestures/IDontKnow_1",
+"animations/Stand/Gestures/IDontKnow_2",
+"animations/Stand/Gestures/IDontKnow_3",
+"animations/Stand/Gestures/Me_1",
+"animations/Stand/Gestures/Me_2",
+"animations/Stand/Gestures/Me_4",
+"animations/Stand/Gestures/Me_7",
+"animations/Stand/Gestures/No_1",
+"animations/Stand/Gestures/No_2",
+"animations/Stand/Gestures/No_3",
+"animations/Stand/Gestures/No_8",
+"animations/Stand/Gestures/No_9",
+"animations/Stand/Gestures/Nothing_2",
+"animations/Stand/Gestures/Please_1",
+"animations/Stand/Gestures/ShowFloor_1",
+"animations/Stand/Gestures/ShowFloor_3",
+"animations/Stand/Gestures/ShowFloor_4",
+"animations/Stand/Gestures/ShowSky_1",
+"animations/Stand/Gestures/ShowSky_11",
+"animations/Stand/Gestures/ShowSky_2",
+"animations/Stand/Gestures/ShowSky_4",
+"animations/Stand/Gestures/ShowSky_5",
+"animations/Stand/Gestures/ShowSky_6",
+"animations/Stand/Gestures/ShowSky_7",
+"animations/Stand/Gestures/ShowSky_8",
+"animations/Stand/Gestures/ShowSky_9",
+"animations/Stand/Gestures/ShowTablet_2",
+"animations/Stand/Gestures/ShowTablet_3",
+"animations/Stand/Gestures/Thinking_1",
+"animations/Stand/Gestures/Thinking_3",
+"animations/Stand/Gestures/Thinking_4",
+"animations/Stand/Gestures/Thinking_6",
+"animations/Stand/Gestures/Thinking_8",
+"animations/Stand/Gestures/Yes_1",
+"animations/Stand/Gestures/Yes_2",
+"animations/Stand/Gestures/Yes_3",
+"animations/Stand/Gestures/YouKnowWhat_1",
+"animations/Stand/Gestures/YouKnowWhat_2",
+"animations/Stand/Gestures/YouKnowWhat_3",
+"animations/Stand/Gestures/YouKnowWhat_5",
+"animations/Stand/Gestures/YouKnowWhat_6",
+"animations/Stand/Gestures/You_1",
+"animations/Stand/Gestures/You_4",
+"animations/Stand/Waiting/ShowSky_1",
+"animations/Stand/Waiting/ShowSky_2",
+"animations/Stand/Waiting/Think_1",
+"animations/Stand/Waiting/Think_2",
+"animations/Stand/Waiting/Think_3"]
+
     def __init__(self, master):
         self.speech_list = ["Hi, I'm Pepper. I'm going to talk about Tigers today with the help of my co presenter, Eeeve",
                             "The tiger is the largest extant cat species and a member of the genus Panthera.",
@@ -17,13 +109,14 @@ class Pepper_For_Cop:
         self.current = 0
         self.end = len(self.speech_list)
         self.movement_flag = True
-        self.ip = "192.168.1.5"
+        self.ip = "192.168.1.3"
         # self.ip = "127.0.0.1"
         self.port = 9559
         self.motionProxy = ALProxy("ALMotion", self.ip, self.port)
         self.postureProxy = ALProxy("ALRobotPosture", self.ip, self.port)
         # self.tts = ALProxy("ALTextToSpeech", self.ip, self.port)
         self.tts = ALProxy("ALAnimatedSpeech", self.ip, self.port)
+        self.animationService = ALProxy("ALAnimationPlayer", self.ip, self.port)
 
         self.textBox = Text(master, width=50, bg="blue", fg="white")
         self.textBox.pack()
@@ -47,10 +140,15 @@ class Pepper_For_Cop:
         self.take_turn_button.pack()
 
     def helloCallBack(self):
-        # tts = ALProxy("ALTextToSpeech", self.ip, self.port)
-        tts = ALProxy("ALAnimatedSpeech", self.ip, self.port)
-        # tts.say("Look what I can do while speaking!")
-        # tts.say("It is territorial and generally a solitary but social predator, requiring large contiguous areas of habitat, which support its requirements for prey and rearing of its offspring. Tiger cubs stay with their mother for about two years, before they become independent and leave their mother's home range to establish their own.")
+        for gesture in self.gestures:
+            self.animationService.run(gesture)
+            print gesture
+            time.sleep(7)
+
+
+
+
+        # self.tts.say("It is territorial and generally a solitary but social predator, requiring large contiguous areas of habitat, which support its requirements for prey and rearing of its offspring. Tiger cubs stay with their mother for about two years, before they become independent and leave their mother's home range to establish their own.")
         # u = self.textBox.get("1.0", "end-1c")
         # u = unicodedata.normalize('NFKD', u).encode('ascii', 'ignore')
         # tts.say(u)
