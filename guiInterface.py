@@ -9,7 +9,8 @@ import time
 
 class Pepper_For_Cop:
 
-    gestures = ["animations/Stand/Emotions/Negative/Bored_1",
+    gestures = [
+"animations/Stand/Emotions/Negative/Bored_1",
 "animations/Stand/Emotions/Neutral/Embarrassed_1",
 "animations/Stand/Emotions/Positive/Happy_4",
 "animations/Stand/Emotions/Positive/Hysterical_1",
@@ -49,6 +50,7 @@ class Pepper_For_Cop:
 "animations/Stand/Gestures/Give_5",
 "animations/Stand/Gestures/Give_6",
 "animations/Stand/Gestures/Hey_1",
+
 "animations/Stand/Gestures/Hey_3",
 "animations/Stand/Gestures/Hey_4",
 "animations/Stand/Gestures/Hey_6",
@@ -99,7 +101,8 @@ class Pepper_For_Cop:
 "animations/Stand/Waiting/ShowSky_2",
 "animations/Stand/Waiting/Think_1",
 "animations/Stand/Waiting/Think_2",
-"animations/Stand/Waiting/Think_3"]
+"animations/Stand/Waiting/Think_3"
+    ]
 
     def __init__(self, master):
         self.speech_list = ["Hi, I'm Pepper. I'm going to talk about Tigers today with the help of my co presenter, Eeeve",
